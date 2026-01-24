@@ -4,11 +4,13 @@ import { spawn, exec, execSync } from "child_process";
 import path from "path";
 import fs from "fs";
 import readline from "readline";
+import { fileURLToPath } from "url";
 
 const program = new Command();
 
 // Common paths and constants
-const __dirname = path.resolve(path.dirname(""));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const HISTORY_FILE = path.join(__dirname, "history.json");
 const FFMPEG_LOCATION = path.join(__dirname, "bin/ffmpeg/bin");
 const YT_DLP = path.join(__dirname, "bin/yt-dlp.exe");
@@ -46,7 +48,7 @@ function addToHistory(url) {
  * @returns {Promise<void>} A promise that resolves when the download is complete.
  */
 function downloadSingle(urlToDownload, opts) {
-  const { output, name, playlist } = opts;
+  const { output, name, playlist, skipExisting } = opts;
   return new Promise((resolve, reject) => {
     let outputTemplate;
     if (playlist) {
@@ -65,6 +67,10 @@ function downloadSingle(urlToDownload, opts) {
       "-o", outputTemplate,
       urlToDownload,
     ];
+
+    if (skipExisting) {
+      args.push("--no-overwrites");
+    }
 
     const yt = spawn(YT_DLP, args, { stdio: "inherit" });
 
@@ -156,6 +162,7 @@ function main() {
     .option("-o, --output <dir>", "output directory", "./downloads")
     .option("-n, --name <name>", "base file or album name")
     .option("-p, --playlist", "force playlist mode")
+    .option("-k, --skip-existing", "Skip download if file already exists")
     .parse();
 
   const opts = program.opts();

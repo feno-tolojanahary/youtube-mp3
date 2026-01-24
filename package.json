@@ -10,5 +10,6 @@
   "description": "",
   "dependencies": {
     "commander": "^14.0.2"
-  }
+  },
+  "type": "module"
 }
