@@ -1,5 +1,5 @@
-{
-  "name": "mp3you",
+  {
+  "name": "yt-mp3",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -11,5 +11,10 @@
   "dependencies": {
     "commander": "^14.0.2"
   },
-  "type": "module"
+  "bin": "index.js",
+  "pkg": {
+    "assets": [
+      "bin/**/*"
+    ]
+  }
 }

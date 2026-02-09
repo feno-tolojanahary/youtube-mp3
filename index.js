@@ -1,21 +1,43 @@
 #!/usr/bin/env node
-import { Command } from "commander";
-import { spawn, exec, execSync } from "child_process";
-import path from "path";
-import fs from "fs";
-import readline from "readline";
-import { fileURLToPath } from "url";
+const { Command } = require("commander");
+const { spawn, exec, execSync } = require("child_process");
+const path = require("path");
+const fs = require("fs");
+const readline = require("readline");
+// REMOVE this line completely in CommonJS:
+// const { fileURLToPath } = require("url");
 
 const program = new Command();
 
 // Common paths and constants
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
 const HISTORY_FILE = path.join(__dirname, "history.json");
-const FFMPEG_LOCATION = path.join(__dirname, "bin/ffmpeg/bin");
-const YT_DLP = path.join(__dirname, "bin/yt-dlp.exe");
+// const FFMPEG_LOCATION = path.join(__dirname, "bin/ffmpeg/bin");
+// const YT_DLP = path.join(__dirname, "bin/yt-dlp.exe");
+const YT_DLP = ensureBinary("yt-dlp.exe");
+const FFMPEG_EXE = ensureBinary("ffmpeg/bin/ffmpeg.exe");
+const FFMPEG_LOCATION = path.dirname(FFMPEG_EXE);
+
 
 // --- History Functions ---
+
+function ensureBinary(relativePath) {
+  const src = path.join(__dirname, "bin", relativePath);
+  const destDir = path.join(process.cwd(), ".mp3you-bin", path.dirname(relativePath));
+  const dest = path.join(process.cwd(), ".mp3you-bin", relativePath);
+
+  if (!fs.existsSync(destDir)) {
+    fs.mkdirSync(destDir, { recursive: true });
+  }
+
+  if (!fs.existsSync(dest)) {
+    fs.copyFileSync(src, dest);
+    fs.chmodSync(dest, 0o755);
+  }
+
+  return dest;
+}
 
 function getHistory() {
   if (fs.existsSync(HISTORY_FILE)) {

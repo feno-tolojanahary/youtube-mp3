@@ -40,6 +40,7 @@ node index.js <url> [options]
 | `-o, --output <dir>` | Specifies the output directory for downloads.                | `./downloads`   |
 | `-n, --name <name>`  | Sets a custom file name for a single video or an album name for a playlist. | YouTube Title   |
 | `-p, --playlist`     | Enables playlist mode. Required when downloading a playlist. | `false`         |
+| `-k, --skip-existing`| Skip download if the file already exists in the output directory. | `false`         |
 
 ---
 
